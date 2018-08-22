@@ -1,3 +1,4 @@
+import org.apache.commons.math3.stat.regression.UpdatingMultipleLinearRegression
 
 buildscript {
 	repositories {
@@ -37,6 +38,8 @@ dependencyManagement {
 		}
 
 		dependency 'com.remondis:remap:4.0.1'
+		dependency 'cglib:cglib:3.2.7'
+		dependency 'org.ow2.asm:asm:6.2.1'
 
 		dependencySet( group: 'org.openjdk.jmh', version: '1.21' ) {
 			entry 'jmh-core'
@@ -45,6 +48,12 @@ dependencyManagement {
 
 		dependency 'org.glassfish:javax.el:3.0.1-b10'
 		dependency 'junit:junit:4.12'
+
+		dependency 'org.slf4j:slf4j-parent:1.7.25'
+		dependencySet( group: 'ch.qos.logback', version: '1.2.3' ) {
+			entry 'logback-classic'
+			entry 'logback-core'
+		}
 	}
 }
 
@@ -70,10 +79,19 @@ dependencies {
 	compile 'com.remondis:remap'
 
 	runtime 'org.glassfish:javax.el'
-	
+	runtime 'ch.qos.logback:logback-classic'
+
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testCompile 'junit:junit'
+}
+
+jmh {
+	failOnError = true
+}
+
+test {
+	outputs.upToDateWhen { false }
 }
 
 eclipse {
