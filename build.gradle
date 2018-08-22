@@ -1,0 +1,89 @@
+
+buildscript {
+	repositories {
+		jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		  }
+	}
+	dependencies {
+		classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
+		classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.7"
+	}
+}
+
+repositories {
+	jcenter()
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+	dependencies {
+		dependency 'org.projectlombok:lombok:1.18.2'
+
+		dependency 'ma.glasnost.orika:orika-core:1.5.2'
+
+		dependency 'com.github.dozermapper:dozer-core:6.4.0'
+		dependency 'net.sf.dozer:dozer:5.5.1'
+
+		dependency 'org.modelmapper:modelmapper:2.2.0'
+		dependency 'com.googlecode.jmapper-framework:jmapper-core:1.6.0.1'
+
+		dependency 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
+		dependencySet( group: 'org.mapstruct', version: '1.2.0.Final' ) {
+			entry 'mapstruct-jdk8'
+			entry 'mapstruct-processor'
+		}
+
+		dependency 'com.remondis:remap:4.0.1'
+
+		dependencySet( group: 'org.openjdk.jmh', version: '1.21' ) {
+			entry 'jmh-core'
+			entry 'jmh-generator-annprocess'
+		}
+
+		dependency 'org.glassfish:javax.el:3.0.1-b10'
+		dependency 'junit:junit:4.12'
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'me.champeau.gradle.jmh'
+apply plugin: 'eclipse'
+
+defaultTasks( 'build' )
+
+dependencies {
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
+	annotationProcessor 'org.mapstruct:mapstruct-processor'
+
+	compileOnly 'org.projectlombok:lombok'
+
+	compile 'ma.glasnost.orika:orika-core'
+	compile 'com.github.dozermapper:dozer-core'
+	compile 'net.sf.dozer:dozer'
+	compile 'org.mapstruct:mapstruct-jdk8'
+	compile 'org.modelmapper:modelmapper'
+	compile 'com.googlecode.jmapper-framework:jmapper-core'
+	compile 'com.remondis:remap'
+
+	runtime 'org.glassfish:javax.el'
+	
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testCompile 'junit:junit'
+}
+
+eclipse {
+	project {
+		natures 'org.eclipse.buildship.core.gradleprojectnature'
+		buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+	}
+
+	classpath {
+		defaultOutputDir = file('build/classes/default')
+		plusConfigurations += [ configurations.jmh ]
+	}
+}
